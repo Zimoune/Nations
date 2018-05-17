@@ -108,7 +108,10 @@ public class BuildPermListener
 	@Listener(order=Order.FIRST, beforeModifications = true)
 	public void onEntitySpawn(SpawnEntityEvent event, @First Player player)
 	{
-		if (!ConfigHandler.getNode("worlds").getNode(event.getEntities().get(0).getWorld().getName()).getNode("enabled").getBoolean())
+		if(event.getEntities().isEmpty()){
+			return;
+		}
+				if (!ConfigHandler.getNode("worlds").getNode(event.getEntities().get(0).getWorld().getName()).getNode("enabled").getBoolean())
 		{
 			return;
 		}

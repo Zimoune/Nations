@@ -50,6 +50,8 @@ public class NationSpawnExecutor implements CommandExecutor
 			}
 			if (!ctx.<String>getOne("name").isPresent())
 			{
+
+
 				src.sendMessage(Text.builder()
 						.append(Text.of(TextColors.AQUA, LanguageHandler.INFO_TELEPORTLIST.split("\\{SPAWNLIST\\}")[0]))
 						.append(Utils.formatNationSpawns(nation, TextColors.YELLOW))

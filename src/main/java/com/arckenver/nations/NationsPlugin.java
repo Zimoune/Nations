@@ -7,16 +7,21 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
+import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
+import com.arckenver.nations.object.Nation;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.service.ChangeServiceProviderEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.economy.EconomyService;
 
 import com.arckenver.nations.cmdexecutor.NationCmds;
@@ -34,7 +39,7 @@ import com.arckenver.nations.service.NationsService;
 import com.arckenver.nations.task.TaxesCollectRunnable;
 import com.google.inject.Inject;
 
-@Plugin(id = "nations", name = "Nations", authors={"Arckenver", "Carrot"}, url="https://github.com/Arckenver/Nations")
+@Plugin(id = "nations", name = "Nations", authors={"Arckenver", "Carrot"}, url="https://github.com/Arckenver/Nations", dependencies = {@Dependency(id = "ultimatechat")})
 public class NationsPlugin
 {
 	private File rootDir;
@@ -96,6 +101,12 @@ public class NationsPlugin
 			zonedNext = zonedNext.plusDays(1);
 		long initalDelay = Duration.between(zonedNow, zonedNext).getSeconds();
 
+		Task.builder().execute(e -> new TaxesCollectRunnable())
+				.delay(initalDelay, TimeUnit.SECONDS)
+				.interval(1, TimeUnit.DAYS)
+				.async()
+				.submit(this);
+/*
 		Sponge.getScheduler()
 				.createTaskBuilder()
 				.execute(new TaxesCollectRunnable())
@@ -103,7 +114,7 @@ public class NationsPlugin
 				.interval(1, TimeUnit.DAYS)
 				.async()
 				.submit(this);
-
+*/
 		logger.info("Plugin ready");
 	}
 
@@ -122,6 +133,27 @@ public class NationsPlugin
 		if (event.getService().equals(EconomyService.class))
 		{
 			economyService = (EconomyService) event.getNewProviderRegistration().getProvider();
+		}
+	}
+/*
+	@Placeholder(id = "player_town") // using '_' or ' ' is not recommended and should be avoided.
+	public String getName(@Source CommandSource source) {
+		return source.getName();
+	}
+*/
+	@Listener
+	public void uchatListener(SendChannelMessageEvent event){
+		if(event.getSender() instanceof Player){
+			Player player = (Player) event.getSender();
+			Nation nation = DataHandler.getNationOfPlayer(player.getUniqueId());
+			if(nation == null){
+				event.addTag("{player_nation}","");
+				event.addTag("{format_player_nation}", "");
+			}else{
+				event.addTag("{format_player_nation}", "&7[&b"+nation.getName()+"&7]");
+				event.addTag("{player_nation}", nation.getName());
+			}
+
 		}
 	}
 

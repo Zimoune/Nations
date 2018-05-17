@@ -1,12 +1,25 @@
+import com.sun.org.apache.xml.internal.security.utils.XMLUtils
+
 plugins {
     id 'org.spongepowered.plugin' version '0.8.1'
 }
 
 group = 'com.carrot'
-version = '2.9-S7.0-MC1.12.1'
+version = '3.02-S7.1-MC1.12.2'
 description = 'A towny-like worldguard-like zone managment plugin'
 
+repositories {
+    maven { url = "https://raw.github.com/FabioZumbi12/UltimateChat/mvn-repo/" }
+    maven { url 'https://jitpack.io' }
+}
+
 dependencies {
-    compile 'org.spongepowered:spongeapi:7.0.0-20170916.165320-38'
+    compile 'org.spongepowered:spongeapi:7.1.0-20180415.070036-19'
     compile 'com.google.code.gson:gson:2.8.1'
+    //compile 'br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-7.0:1.8.4'
+    compile ('br.net.fabiozumbi12.UltimateChat:UltimateChat-Sponge-7.0-8.0:1.8.4'){
+        exclude module: "UltimateChat-Spigot"
+    }
+    //compile 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
+
 }
